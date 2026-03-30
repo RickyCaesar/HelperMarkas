@@ -19,10 +19,14 @@
 ---
 
 ## Cara Menjalankan (Lokal)
-- Buka file berikut dengan browser: [index.html](./index.html)
-- Masukkan NPSN lalu tekan Enter atau klik tombol “Cari”.
-- Isi koreksi pada area “Koreksi (isi manual, satu baris = satu poin)”.
-- Isi “Nilai yang diisi” untuk melihat persentase terhadap “Jumlah Dana”.
+- Buka: [index.html](./index.html)
+- Masukkan NPSN lalu Enter atau klik “Cari”.
+- Pilih “Jenis Kertas Kerja” sesuai kebutuhan:
+  - BOS Daerah, BOS Reguler, BOS Kinerja, SiLPA BOS Kinerja, atau BOS Lainnya.
+- Isi “Nama Verifikator” dan “No. HP/WA” (tersimpan otomatis di browser).
+- Isi koreksi pada area “Koreksi (isi manual, satu baris = satu poin)”:
+  - Gunakan tombol “Bersihkan Koreksi” untuk menghapus semua catatan dengan cepat.
+- Isi “Nilai yang diisi” di bagian kalkulator untuk melihat persentase terhadap “Jumlah Dana”.
 - Klik “Salin Hasil” untuk menyalin ringkasan.
 
 ---
@@ -83,6 +87,11 @@ Aplikasi menyediakan dua tombol:
 Format pesan ringkas:
 - Ditolak: `Pengajuan BOS Daerah {NPSN} - {Nama Sekolah} Ditolak, silahkan cek hasil verifikasi kami`
 - Disahkan: `Pengajuan BOS Daerah {NPSN} - {Nama Sekolah} disahkan, silahkan cek status`
+
+Pengaturan kirim:
+- Bot Token, Chat ID, dan Topic ID (opsional) diisi pada form “Kirim ke Telegram”.
+- Topic ID diisi bila ingin mengirim ke Topik Grup (message_thread_id).
+- Nilai tersimpan di browser (localStorage).
 
 ### Menyiapkan Bot Telegram (Detail Lengkap)
 1. Buat Bot via BotFather:

@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pencarian NPSN BOSDA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root { color-scheme: light dark; }
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; line-height: 1.4; }
@@ -25,26 +26,26 @@
     .stack { display: grid; gap: 10px; }
   </style>
 </head>
-<body>
-  <h1>Pencarian NPSN BOSDA</h1>
-  <div class="card stack">
-    <div class="stack">
-      <div class="row">
-        <label for="file">Pilih Excel sumber data:</label>
-        <input id="file" type="file" accept=".xlsx,.xlsb,.xlsm,.xls" />
-        <span id="fileStatus" class="status pill">Belum ada file</span>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+  <h1 class="text-2xl font-semibold mb-4">Pencarian NPSN BOSDA</h1>
+  <div class="card stack max-w-3xl mx-auto bg-slate-800/80 backdrop-blur p-6 rounded-xl border border-slate-700 space-y-4">
+    <div class="stack space-y-2">
+      <div class="row flex items-center gap-3 flex-wrap">
+        <label for="file" class="text-sm">Pilih Excel sumber data:</label>
+        <input id="file" type="file" accept=".xlsx,.xlsb,.xlsm,.xls" class="text-sm bg-slate-800 border border-slate-700 text-slate-100 rounded-md px-2 py-1" />
+        <span id="fileStatus" class="status pill text-xs border border-slate-600 text-slate-200 rounded-full px-2 py-1">Belum ada file</span>
       </div>
-      <div class="status muted">Gunakan file: Kertas Kerja BOSDA Swasta 2026.xlsx</div>
+      <div class="status muted text-slate-400">Gunakan file: Kertas Kerja BOSDA Swasta 2026.xlsx</div>
     </div>
-    <hr>
-    <div class="row">
-      <input id="npsnInput" type="text" placeholder="Masukkan NPSN, mis. 30409868" />
-      <button id="searchBtn">Cari</button>
-      <button id="copyBtn" class="secondary" disabled>Salin Hasil</button>
-      <span id="matchInfo" class="status"></span>
+    <hr class="border-slate-200">
+    <div class="row flex items-center gap-3 flex-wrap">
+      <input id="npsnInput" type="text" placeholder="Masukkan NPSN, mis. 30409868" class="border border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-400 rounded-md px-3 py-2 min-w-[260px]" />
+      <button id="searchBtn" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-md">Cari</button>
+      <button id="copyBtn" class="secondary bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-md" disabled>Salin Hasil</button>
+      <span id="matchInfo" class="status text-sm text-slate-600"></span>
     </div>
-    <div id="result" class="result muted">Hasil akan muncul di sini setelah pencarian.</div>
-    <div id="libWarn" class="status hidden">Gagal memuat pustaka pembaca Excel. Pastikan koneksi internet tersedia atau unduh xlsx.full.min.js dan taruh di folder yang sama lalu ubah referensi skrip.</div>
+    <div id="result" class="result muted whitespace-pre-wrap p-3 rounded-lg border border-dashed border-slate-600 text-slate-100 min-h-[80px]">Hasil akan muncul di sini setelah pencarian.</div>
+    <div id="libWarn" class="status hidden text-sm text-amber-600">Gagal memuat pustaka pembaca Excel. Pastikan koneksi internet tersedia atau unduh xlsx.full.min.js dan taruh di folder yang sama lalu ubah referensi skrip.</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.2/dist/xlsx.full.min.js"></script>
@@ -325,6 +326,7 @@ No,NPSN,Nama Sekolah,Kab/Kota,Jumlah Siswa,Jumlah Dana
     let danaDisplayEl, userAmountInput, percentDisplayEl;
     let tgTokenInput, tgChatIdInput, tgTopicIdInput, tgStatusEl;
     let verNameInput, verPhoneInput;
+    let programSelect;
 
     function parseCSV(text) {
       const rows = [];
@@ -439,7 +441,8 @@ No,NPSN,Nama Sekolah,Kab/Kota,Jumlah Siswa,Jumlah Dana
       let statusText = 'Ditolak pada ' + formatDate(tanggal);
       if (statusRaw.includes('lulus') || statusRaw.includes('terima') || statusRaw.includes('accept')) statusText = 'Diterima pada ' + formatDate(tanggal);
       if (statusRaw && !/tolak|lulus|terima|accept/.test(statusRaw)) statusText = 'Status: ' + statusRaw + ' pada ' + formatDate(tanggal);
-      const program = safeStr(getField(row, [/program/, /skema/, /jenis.*bos/, /bos.*daerah/])).trim() || DEFAULT_PROGRAM;
+      let program = safeStr(getField(row, [/program/, /skema/, /jenis.*bos/, /bos.*daerah/])).trim() || DEFAULT_PROGRAM;
+      if (programSelect && programSelect.value) program = programSelect.value;
       const corrections = parseCorrections();
       let verName = safeStr(getField(row, [/verifikator/, /validator/, /petugas/, /nama.*verifikator/])).trim() || DEFAULT_VER_NAME;
       let verPhone = safeStr(getField(row, [/wa/, /hp/, /kontak/, /no.*hp/, /telepon/, /telp/])).trim() || DEFAULT_VER_PHONE;
@@ -647,11 +650,11 @@ No,NPSN,Nama Sekolah,Kab/Kota,Jumlah Siswa,Jumlah Dana
     npsnInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(); });
     (function(){
       const wrap = document.createElement('div');
-      wrap.className = 'stack';
-      wrap.innerHTML = '<label for="correctionsInput">Koreksi (isi manual, satu baris = satu poin):</label><textarea id="correctionsInput" placeholder="Contoh:\nkoreksi 1\nKoreksi 2\ndst"></textarea>';
+      wrap.className = 'stack space-y-2';
+      wrap.innerHTML = '<label for="correctionsInput" class="text-sm">Koreksi (isi manual, satu baris = satu poin):</label><textarea id="correctionsInput" class="border border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-400 rounded-md p-3" placeholder="Contoh:\nkoreksi 1\nKoreksi 2\ndst"></textarea>';
       const clearRow = document.createElement('div');
-      clearRow.className = 'row';
-      clearRow.innerHTML = '<button id="clearCorrectionsBtn" class="secondary">Bersihkan Koreksi</button>';
+      clearRow.className = 'row flex gap-3';
+      clearRow.innerHTML = '<button id="clearCorrectionsBtn" class="secondary bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-md">Bersihkan Koreksi</button>';
       wrap.appendChild(clearRow);
       resultEl.parentNode.insertBefore(wrap, resultEl);
       document.getElementById('clearCorrectionsBtn').addEventListener('click', () => {
@@ -659,8 +662,8 @@ No,NPSN,Nama Sekolah,Kab/Kota,Jumlah Siswa,Jumlah Dana
         if (el) { el.value = ''; refreshResult(); }
       });
       const verWrap = document.createElement('div');
-      verWrap.className = 'stack';
-      verWrap.innerHTML = '<div class="row"><label for="verName">Nama Verifikator:</label><input id="verName" type="text" placeholder="Nama verifikator"></div><div class="row"><label for="verPhone">No. HP/WA:</label><input id="verPhone" type="text" placeholder="08xxxx"></div>';
+      verWrap.className = 'stack space-y-2';
+      verWrap.innerHTML = '<div class="row flex items-center gap-3 flex-wrap"><label for="verName" class="text-sm">Nama Verifikator:</label><input id="verName" type="text" placeholder="Nama verifikator" class="border border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-400 rounded-md px-3 py-2 min-w-[220px]"></div><div class="row flex items-center gap-3 flex-wrap"><label for="verPhone" class="text-sm">No. HP/WA:</label><input id="verPhone" type="text" placeholder="08xxxx" class="border border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-400 rounded-md px-3 py-2 min-w-[220px]"></div>';
       resultEl.parentNode.insertBefore(verWrap, resultEl);
       verNameInput = document.getElementById('verName');
       verPhoneInput = document.getElementById('verPhone');
@@ -670,9 +673,17 @@ No,NPSN,Nama Sekolah,Kab/Kota,Jumlah Siswa,Jumlah Dana
       if (savedVerPhone) verPhoneInput.value = savedVerPhone;
       verNameInput.addEventListener('input', () => { localStorage.setItem('ver_name', verNameInput.value.trim()); refreshResult(); });
       verPhoneInput.addEventListener('input', () => { localStorage.setItem('ver_phone', verPhoneInput.value.trim()); refreshResult(); });
+      const programWrap = document.createElement('div');
+      programWrap.className = 'stack';
+      programWrap.innerHTML = '<div class="row flex items-center gap-3 flex-wrap"><label for="programType" class="text-sm">Jenis Kertas Kerja:</label><select id="programType" class="border border-slate-700 bg-slate-800 text-slate-100 rounded-md px-3 py-2"><option value="BOS Daerah">BOS Daerah</option><option value="BOS Reguler">BOS Reguler</option><option value="BOS Kinerja">BOS Kinerja</option><option value="SiLPA BOS Kinerja">SiLPA BOS Kinerja</option><option value="BOS Lainnya">BOS Lainnya</option></select></div>';
+      resultEl.parentNode.insertBefore(programWrap, resultEl);
+      programSelect = document.getElementById('programType');
+      const savedProgram = localStorage.getItem('program_type');
+      if (savedProgram) programSelect.value = savedProgram;
+      programSelect.addEventListener('change', () => { localStorage.setItem('program_type', programSelect.value); refreshResult(); });
       const calcWrap = document.createElement('div');
-      calcWrap.className = 'stack';
-      calcWrap.innerHTML = '<hr><div class="row"><label>Jumlah Dana:</label><span id="danaDisplay" class="pill">-</span></div><div class="row"><label for="userAmount">Nilai yang diisi:</label><input id="userAmount" type="text" placeholder="Masukkan nilai (contoh: 12500000)"><span id="percentDisplay" class="status"></span></div>';
+      calcWrap.className = 'stack space-y-2';
+      calcWrap.innerHTML = '<hr class="border-slate-200"><div class="row flex items-center gap-3"><label class="text-sm">Jumlah Dana:</label><span id="danaDisplay" class="pill text-xs border border-slate-600 text-slate-200 rounded-full px-2 py-1">-</span></div><div class="row flex items-center gap-3 flex-wrap"><label for="userAmount" class="text-sm">Nilai yang diisi:</label><input id="userAmount" type="text" class="border border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-400 rounded-md px-3 py-2 min-w-[220px]" placeholder="Masukkan nilai (contoh: 12500000)"><span id="percentDisplay" class="status text-sm text-slate-400"></span></div>';
       resultEl.parentNode.insertBefore(calcWrap, resultEl.nextSibling);
       danaDisplayEl = document.getElementById('danaDisplay');
       userAmountInput = document.getElementById('userAmount');
@@ -685,8 +696,8 @@ No,NPSN,Nama Sekolah,Kab/Kota,Jumlah Siswa,Jumlah Dana
         });
       }
       const tgWrap = document.createElement('div');
-      tgWrap.className = 'stack';
-      tgWrap.innerHTML = '<hr><div class="row"><label>Kirim ke Telegram</label></div><div class="row"><label for="tgToken">Bot Token:</label><input id="tgToken" type="text" placeholder="123456:ABC..."></div><div class="row"><label for="tgChatId">Chat ID:</label><input id="tgChatId" type="text" placeholder="-1001234567890"></div><div class="row"><label for="tgTopicId">Topic ID (opsional):</label><input id="tgTopicId" type="text" placeholder="message_thread_id"></div><div class="row"><button id="tgSahBtn">Sah!!</button><button id="tgTolakBtn" class="secondary">Ditolak!!</button><span id="tgStatus" class="status"></span></div>';
+      tgWrap.className = 'stack space-y-2';
+      tgWrap.innerHTML = '<hr class="border-slate-200"><div class="row"><label class="text-sm">Kirim ke Telegram</label></div><div class="row flex items-center gap-3 flex-wrap"><label for="tgToken" class="text-sm">Bot Token:</label><input id="tgToken" type="text" class="border border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-400 rounded-md px-3 py-2 min-w-[260px]" placeholder="123456:ABC..."></div><div class="row flex items-center gap-3 flex-wrap"><label for="tgChatId" class="text-sm">Chat ID:</label><input id="tgChatId" type="text" class="border border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-400 rounded-md px-3 py-2 min-w-[260px]" placeholder="-1001234567890"></div><div class="row flex items-center gap-3 flex-wrap"><label for="tgTopicId" class="text-sm">Topic ID (opsional):</label><input id="tgTopicId" type="text" class="border border-slate-700 bg-slate-800 text-slate-100 placeholder-slate-400 rounded-md px-3 py-2 min-w-[220px]" placeholder="message_thread_id"></div><div class="row flex items-center gap-3 flex-wrap"><button id="tgSahBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md">Sah!!</button><button id="tgTolakBtn" class="secondary bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-md">Ditolak!!</button><span id="tgStatus" class="status text-sm text-slate-400"></span></div>';
       resultEl.parentNode.insertBefore(tgWrap, calcWrap.nextSibling);
       tgTokenInput = document.getElementById('tgToken');
       tgChatIdInput = document.getElementById('tgChatId');
