@@ -622,9 +622,10 @@ No,NPSN,Nama Sekolah,Kab/Kota,Jumlah Siswa,Jumlah Dana
       const npsn = currentRow ? safeStr(currentRow.npsn || getField(currentRow, [/^npsn$/])) : '';
       const nama = currentRow ? safeStr(currentRow.nama_sekolah || getField(currentRow, [/nama.*sekolah/, /^sekolah$/, /^namasekolah$/])) : '';
       const npsnDigits = digits(npsn);
+      const program = (programSelect && programSelect.value) ? programSelect.value : 'BOS Daerah';
       const text = decision === 'sah'
-        ? 'Pengajuan BOS Daerah ' + npsnDigits + ' - ' + nama + ' disahkan, silahkan cek status'
-        : 'Pengajuan BOS Daerah ' + npsnDigits + ' - ' + nama + ' Ditolak, silahkan cek hasil verifikasi kami';
+        ? 'Pengajuan ' + program + ' ' + npsnDigits + ' - ' + nama + ' disahkan, silahkan cek status'
+        : 'Pengajuan ' + program + ' ' + npsnDigits + ' - ' + nama + ' Ditolak, silahkan cek hasil verifikasi kami';
       if (tgStatusEl) tgStatusEl.textContent = 'Mengirim...';
       try {
         const topicRaw = tgTopicIdInput && tgTopicIdInput.value.trim();
